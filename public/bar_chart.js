@@ -23,7 +23,7 @@ var stack = d3.layout.stack()
     .y(function(d) { return d.value; })
     .out(function(d, y0) { d.valueOffset = y0; });
 
-var color = d3.scale.category20c();
+var color = d3.scale.ordinal().range(["#3182bd", "#e6550d", "#31a354", "#756bb1"]);
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
