@@ -1,5 +1,5 @@
-var margin = {top: 10, right: 20, bottom: 20, left: 60},
-    width = 960 - margin.left - margin.right,
+var margin = {top: 10, right: 20, bottom: 20, left: 80},
+    width = 770 - margin.left - margin.right,
     height = 750 - margin.top - margin.bottom;
 
 var status = "stacked";
@@ -46,12 +46,17 @@ d3.csv("data.csv", function(error, data) {
   x0.domain(dataByGroup.map(function(d) { return d.key; }));
   x1.domain([d3.max(data, function(d) { return d.value; }), 0]).range([x0.rangeBand(), 0]);
 
-  dataByGroup[3].values.forEach(function(d){
+  dataByGroup[4].values.forEach(function(d){
     d3.select("#chart_container").append("div")
     .attr("class", "index_label")
     .text(d.value + d.valueOffset)
     .style("top", (11 + y(d.department)).toString() + "px")
-    .style("left", (110 + (x1(d.valueOffset + d.value))).toString() + "px");
+    .style("left", (120 + (x1(d.valueOffset + d.value))).toString() + "px");
+    d3.select("#chart_container").append("div")
+    .attr("class", "axis_label")
+    .html("<div class='text'>" + d.department + "</div>")
+    .style("top", (11 + y(d.department)).toString() + "px")
+    .style("left", "0px");
   });
 
   var group = svg.selectAll(".group")
@@ -94,9 +99,9 @@ d3.csv("data.csv", function(error, data) {
       });
 
   //Adds y-axis labels
-  group.filter(function(d, i) { return !i; }).append("g")
-      .attr("class", "y axis")
-      .call(yAxis);
+  // group.filter(function(d, i) { return !i; }).append("g")
+  //     .attr("class", "y axis")
+  //     .call(yAxis);
 
   function toggle() {
     if (status == "stacked"){
@@ -111,7 +116,7 @@ d3.csv("data.csv", function(error, data) {
   function transitionMultiples() {
     var t = d3.transition().duration(750),
         g = t.selectAll(".group").attr("transform", function(d) { return "translate(" + x0(d.key) + ", 0)"; }),
-        v = d3.selectAll(".index_label").transition().duration(750).style("left", "800px");
+        v = d3.selectAll(".index_label").transition().duration(750).style("left", "680px");
         g.selectAll("rect").attr("x", function(d) { return 0; });
     // $(".index_label").animate({"left": "800px"}, 750);
     // g.select(".group-label").attr("x", function(d) { return x1(d.values[0].value / 2); })
