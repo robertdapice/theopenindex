@@ -39,7 +39,7 @@ var svg = d3.select("body").append("svg")
 d3.csv("data.csv", function(error, data) {
 
   data.forEach(function(d) {
-    d.date = parseDate(d.date);
+    d.date = d.date;
     d.value = +d.value;
   });
 
