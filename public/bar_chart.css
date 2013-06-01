@@ -44,6 +44,10 @@ form {
   position:relative;
 }
 
+#bar_chart {
+  width: 900px;
+}
+
 .data_block {
   cursor: pointer ;
 }
