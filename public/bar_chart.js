@@ -1,6 +1,3 @@
-var parseDate = d3.time.format("%Y-%m").parse,
-    formatYear = d3.format("02d"),
-    formatDate = function(d) { return "Q" + ((d.getMonth() / 3 | 0) + 1) + formatYear(d.getFullYear() % 100); };
 
 var margin = {top: 10, right: 20, bottom: 20, left: 60},
     width = 960 - margin.left - margin.right,
@@ -16,8 +13,7 @@ var x = d3.scale.ordinal()
 
 var xAxis = d3.svg.axis()
     .scale(x)
-    .orient("bottom")
-    .tickFormat(formatDate);
+    .orient("bottom");
 
 var nest = d3.nest()
     .key(function(d) { return d.group; });
