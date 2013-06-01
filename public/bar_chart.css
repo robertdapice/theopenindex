@@ -1,5 +1,8 @@
+* {
+  font-family: 'Droid Serif', sans-serif;
+}
+
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: auto;
   position: relative;
   width: 960px;
@@ -28,4 +31,19 @@ form {
   position: absolute;
   right: 10px;
   top: 10px;
+}
+
+.index_label {
+  position:absolute;
+  z-index: 100;
+  font-size: 22px;
+  color: #e6550d;
+}
+
+#chart_container {
+  position:relative;
+}
+
+.data_block {
+  cursor: pointer ;
 }
