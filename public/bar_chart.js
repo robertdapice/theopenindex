@@ -16,11 +16,11 @@ var xAxis = d3.svg.axis()
     .orient("bottom");
 
 var nest = d3.nest()
-    .key(function(d) { return d.group; });
+    .key(function(d) { return d.category; });
 
 var stack = d3.layout.stack()
     .values(function(d) { return d.values; })
-    .x(function(d) { return d.date; })
+    .x(function(d) { return d.department; })
     .y(function(d) { return d.value; })
     .out(function(d, y0) { d.valueOffset = y0; });
 
@@ -35,14 +35,14 @@ var svg = d3.select("body").append("svg")
 d3.csv("data.csv", function(error, data) {
 
   data.forEach(function(d) {
-    d.date = d.date;
+    d.department = d.department;
     d.value = +d.value;
   });
 
   var dataByGroup = nest.entries(data);
-
+  console.log (dataByGroup);
   stack(dataByGroup);
-  x.domain(dataByGroup[0].values.map(function(d) { return d.date; }));
+  x.domain(dataByGroup[0].values.map(function(d) { return d.department; }));
   y0.domain(dataByGroup.map(function(d) { return d.key; }));
   y1.domain([0, d3.max(data, function(d) { return d.value; })]).range([y0.rangeBand(), 0]);
 
@@ -52,6 +52,7 @@ d3.csv("data.csv", function(error, data) {
       .attr("class", "group")
       .attr("transform", function(d) { return "translate(0," + y0(d.key) + ")"; });
 
+  //Adds y-axis labels
   group.append("text")
       .attr("class", "group-label")
       .attr("x", -6)
@@ -59,20 +60,23 @@ d3.csv("data.csv", function(error, data) {
       .attr("dy", ".35em")
       .text(function(d) { return d.key; });
 
+  //Adds all data bars
   group.selectAll("rect")
       .data(function(d) { return d.values; })
     .enter().append("rect")
-      .style("fill", function(d) { return color(d.group); })
-      .attr("x", function(d) { return x(d.date); })
+      .style("fill", function(d) { return color(d.category); })
+      .attr("x", function(d) { return x(d.department); })
       .attr("y", function(d) { return y1(d.value); })
       .attr("width", x.rangeBand())
       .attr("height", function(d) { return y0.rangeBand() - y1(d.value); });
 
+  //Adds x-axis labels
   group.filter(function(d, i) { return !i; }).append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + y0.rangeBand() + ")")
       .call(xAxis);
 
+  //Adds change event to inputs
   d3.selectAll("input").on("change", change);
 
   var timeout = setTimeout(function() {
