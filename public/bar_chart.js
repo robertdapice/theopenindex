@@ -11,8 +11,8 @@ var x = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1, 0);
 
 var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
+    .scale(x);
+//    .orient("bottom");
 
 var nest = d3.nest()
     .key(function(d) { return d.category; });
@@ -39,8 +39,8 @@ d3.csv("data.csv", function(error, data) {
   });
 
   var dataByGroup = nest.entries(data);
-  console.log (dataByGroup);
   stack(dataByGroup);
+  console.log(dataByGroup);
   x.domain(dataByGroup[0].values.map(function(d) { return d.department; }));
   y0.domain(dataByGroup.map(function(d) { return d.key; }));
   y1.domain([0, d3.max(data, function(d) { return d.value; })]).range([y0.rangeBand(), 0]);
