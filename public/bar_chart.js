@@ -1,4 +1,3 @@
-
 var margin = {top: 10, right: 20, bottom: 20, left: 60},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -66,6 +65,8 @@ d3.csv("data.csv", function(error, data) {
     .enter().append("rect")
       .style("fill", function(d) { return color(d.category); })
       .attr("x", function(d) { return x(d.department); })
+      .style("opacity", 0.6)
+      .style("stroke", "#fff")
       .attr("y", function(d) { return y1(d.value); })
       .attr("width", x.rangeBand())
       .attr("height", function(d) { return y0.rangeBand() - y1(d.value); });
