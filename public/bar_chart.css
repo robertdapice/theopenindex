@@ -99,23 +99,23 @@ ul li {
   margin-bottom: 8px;
 }
 
-#description_group_0 h3, #description_group_0 h4 {
+#description_group_0 h3, #description_group_0 h4, .open_data {
   color: #3182bd;
 }
 
-#description_group_1 h3, #description_group_1 h4 {
+#description_group_1 h3, #description_group_1 h4, .financial_reporting {
   color: #e6550d;
 }
 
-#description_group_2 h3, #description_group_2 h4 {
+#description_group_2 h3, #description_group_2 h4, .foi_compliance {
   color: #31a354;
 }
 
-#description_group_3 h3, #description_group_3 h4 {
+#description_group_3 h3, #description_group_3 h4, .online_access {
   color: #756bb1;
 }
 
-#description_group_4 h3, #description_group_4 h4 {
+#description_group_4 h3, #description_group_4 h4, .overdue_qon {
   color: #636363;
 }
 
@@ -137,6 +137,10 @@ ul li {
 
 #description_group_4 {
   border-left: 5px solid #d9d9d9;
+}
+
+#description_group_stacked {
+  display: block;
 }
 
 
@@ -165,33 +169,18 @@ h2 {
 
   .item_detail {
     background: #fafafa;
+    border-left: solid 5px #d9d9d9;
     display: none;
     margin-top: 20px;
     padding: 20px;
-    .row {
-      margin-bottom: 20px;
-      padding-left: 5px;
-      .label {
-        width: 250px;
-        text-transform: uppercase;
-        color: #666;
-      }
-      .value {
-        margin-top: 3px;
-        color: #e6550d;
-        font-size: 24px;
-        line-height: 26px;
-      }
-      .value.description {
-        font-size: 12px;
-        line-height: 14px;
-      }
-      .value.source {
-        font-size: 12px;
-        line-height: 14px;
-      }
-    }
   }
+
+#footer {
+  position: absolute;
+  top: 680px;
+  font-size: 11px;
+  color: #666;
+}
 
 .data_block {
   cursor: pointer ;

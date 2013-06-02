@@ -280,6 +280,14 @@ d3.csv("data.csv", function(error, data) {
           d3.select("#group_label_" + categories[d.key]).transition().duration(750)
           .style("left", ( 110 + x1(d.values[d.values.length - 1].valueOffset[0])).toString() + "px" );
         })
+
+        d3.selectAll(".item_detail").transition().duration(150).style("opacity", 0).each("end", function(){
+          d3.selectAll(".item_detail").style("display", "none");
+          var timeout = setTimeout(function() {
+            d3.select("#description_group_stacked").style("display", "block").transition().duration(150).style("opacity", 1);
+          }, 400);
+        });
+
   }
 
   function invert(obj) {
