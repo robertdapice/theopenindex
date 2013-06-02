@@ -111,6 +111,11 @@ d3.csv("data.csv", function(error, data) {
   dataByGroup.forEach(function(d){
     categories[d.key] = category_counter;
     category_counter ++;
+  });
+
+  dataByGroup[0].values.forEach(function(d){
+    departments[d.department] = department_counter;
+    department_counter ++;
   })
 
   stack(dataByGroup);
@@ -128,11 +133,13 @@ d3.csv("data.csv", function(error, data) {
 
 
   dataByGroup[0].values.forEach(function(d){
-    d3.select("#chart_container").append("div")
-    .attr("class", "axis_label")
-    .html("<div class='text'>" + d.department + "</div>")
-    .style("top", (41 + y(d.department)).toString() + "px")
-    .style("left", "0px");
+      d3.select("#chart_container").append("div")
+      .attr("class", "axis_label")
+      .html("<div class='text'>" + d.department + "</div>")
+      .style("top", (41 + y(d.department)).toString() + "px")
+      .style("left", "0px")
+      .style("opacity", 0)
+      .transition().duration(120).delay((19 - departments[d.department]) * 30).style("opacity", 1);
   })
 
   var group = svg.selectAll(".group")
@@ -156,7 +163,7 @@ d3.csv("data.csv", function(error, data) {
       .transition().duration(300).style("opacity", 1);
 
     })
-  }, 2000);
+  }, 1300);
 
   //Adds all data bars
   group.selectAll("rect")
@@ -164,10 +171,10 @@ d3.csv("data.csv", function(error, data) {
     .enter().append("rect")
       .style("fill", function(d) { return color(d.category); })
       .attr("y", function(d) { return y(d.department); })
-      .style("opacity", 0.7)
       .style("stroke", "#fff")
       .attr("class", "data_block")
       .attr("x", function(d) { return 0; })
+      .style("opacity", 0.7)
       .attr("height", y.rangeBand())
       .attr("width", function(d) { return 0; })
       .on("mouseover", function(d) {
@@ -181,13 +188,13 @@ d3.csv("data.csv", function(error, data) {
       })
       .on("click", function(d) {
         toggle(d.category);
-      });
-
-  setTimeout(function() {
-      group.transition().duration(750).selectAll("rect")
+      })
+      .transition().duration(600)
+      .delay(function(d) { return (19 - departments[d.department]) * 30 })
       .attr("x", function(d) { return x1(d.valueOffset[0]); })
       .attr("width", function(d) { return x1(d.value); });
-    setTimeout(function() {
+
+  setTimeout(function() {
         //Add all item totals.
         d3.selectAll(".group").data()[4].values.forEach(function(d){
           d3.select("#chart_container").append("div")
@@ -201,8 +208,7 @@ d3.csv("data.csv", function(error, data) {
           .transition().duration(300).style("opacity", 1);
 
         });
-      }, 1000);
-    }, 500);
+    }, 1000);
 
   function toggle(category) {
     if (status == category){
