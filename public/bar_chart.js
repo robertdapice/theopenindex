@@ -139,7 +139,15 @@ d3.csv("data.csv", function(error, data) {
       .attr("transform", function(d) { return "translate(" + x0(x0.domain()[0]) + ", 0)"; });
 
   //Add all item totals.
-  add_totals();
+  d3.selectAll(".group").data()[4].values.forEach(function(d){
+    d3.select("#chart_container").append("div")
+    .attr("class", "index_label")
+    .attr("id", "index_label_" + d.department.substring(0,3))
+    .text(d.value + d.valueOffset[0])
+    .style("top", (41 + y(d.department)).toString() + "px")
+    .style("color", "#e6550d")
+    .style("left", (120 + (x1(d.valueOffset[0] + d.value))).toString() + "px");
+  });
 
   //Adds all category labels
   dataByGroup.forEach(function(d){
@@ -216,8 +224,11 @@ d3.csv("data.csv", function(error, data) {
 
   function transitionStacked() {
     var t = d3.transition().duration(750),
-        g = t.selectAll(".group").attr("transform", "translate(" + x0(x0.domain()[0]) + ", 0)");
-
+        g = t.selectAll(".group").attr("transform", "translate(" + x0(x0.domain()[0]) + ", 0)")
+        .each("end", function(){
+          add_totals();
+        });
+        v = d3.selectAll(".index_label").transition().duration(150).style("opacity", 0);
         g.selectAll("rect").attr("x", function(d) { return x1(d.valueOffset[0]); });
     // g.select(".group-label").attr("x", function(d) { return x1(d.values[0].value / 2 + d.values[0].valueOffset); })
   }
@@ -236,13 +247,11 @@ d3.csv("data.csv", function(error, data) {
   function add_totals(){
     if (status == "stacked"){
       d3.selectAll(".group").data()[4].values.forEach(function(d){
-        d3.select("#chart_container").append("div")
-        .attr("class", "index_label")
-        .attr("id", "index_label_" + d.department.substring(0,3))
+        d3.select("#index_label_" + d.department.substring(0,3))
         .text(d.value + d.valueOffset[0])
-        .style("top", (41 + y(d.department)).toString() + "px")
+        .style("left", (120 + (x1(d.valueOffset[0] + d.value))).toString() + "px")
         .style("color", "#e6550d")
-        .style("left", (120 + (x1(d.valueOffset[0] + d.value))).toString() + "px");
+        .transition(150).style("opacity", 1);
       });
     } else {
       d3.selectAll(".group").data()[categories[status]].values.forEach(function(d){
