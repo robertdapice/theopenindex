@@ -23,15 +23,78 @@ var stack = d3.layout.stack()
     .values(function(d) { return d.values; })
     .y(function(d) { return d.value; })
     .x(function(d) { return d.department; })
-    .out(function(d, x0) { d.valueOffset = x0; });
+    .out(function(d, x0) {
+      d.valueOffset = new Array();
+      d.valueOffset[0] = x0;
+    });
 
-var color = d3.scale.ordinal().range(["#3182bd", "#e6550d", "#31a354", "#756bb1"]);
+var stack_1 = d3.layout.stack()
+    .values(function(d) { return d.values; })
+    .y(function(d) {
+      if (categories[d.category] > 0){
+        return d.value;
+      } else {
+        return 0;
+      }
+    })
+    .x(function(d) { return d.department; })
+    .out(function(d, x0) {
+      d.valueOffset[1] = x0;
+    });
+
+ var stack_2 = d3.layout.stack()
+    .values(function(d) { return d.values; })
+    .y(function(d) {
+      if (categories[d.category] > 1){
+        return d.value;
+      } else {
+        return 0;
+      }
+    })
+    .x(function(d) { return d.department; })
+    .out(function(d, x0) {
+      d.valueOffset[2] = x0;
+    });
+
+var stack_3 = d3.layout.stack()
+    .values(function(d) { return d.values; })
+    .y(function(d) {
+      if (categories[d.category] > 2){
+        return d.value;
+      } else {
+        return 0;
+      }
+    })
+    .x(function(d) { return d.department; })
+    .out(function(d, x0) {
+      d.valueOffset[3] = x0;
+    });
+
+var stack_4 = d3.layout.stack()
+    .values(function(d) { return d.values; })
+    .y(function(d) {
+      if (categories[d.category] > 3){
+        return d.value;
+      } else {
+        return 0;
+      }
+    })
+    .x(function(d) { return d.department; })
+    .out(function(d, x0) {
+      d.valueOffset[4] = x0;
+    });
+
+var color = d3.scale.ordinal().range(["#3182bd", "#e6550d", "#31a354", "#756bb1", "#636363"]);
 
 var svg = d3.select("#bar_chart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var categories = new Object();
+var inverted_categories = new Object();
+category_counter = 0;
 
 d3.csv("data.csv", function(error, data) {
 
@@ -41,23 +104,33 @@ d3.csv("data.csv", function(error, data) {
   });
 
   var dataByGroup = nest.entries(data);
+
+  dataByGroup.forEach(function(d){
+    categories[d.key] = category_counter;
+    category_counter ++;
+  })
+
   stack(dataByGroup);
+  stack_1(dataByGroup);
+  stack_2(dataByGroup);
+  stack_3(dataByGroup);
+  stack_4(dataByGroup);
+  console.log(dataByGroup);
   y.domain(dataByGroup[0].values.map(function(d) { return d.department; }));
-  x0.domain(dataByGroup.map(function(d) { return d.key; }));
+  x0.domain(dataByGroup.map(function(d) {
+    return d.key;
+    }));
+  inverted_categories = invert(categories);
   x1.domain([d3.max(data, function(d) { return d.value; }), 0]).range([x0.rangeBand(), 0]);
 
-  dataByGroup[4].values.forEach(function(d){
-    d3.select("#chart_container").append("div")
-    .attr("class", "index_label")
-    .text(d.value + d.valueOffset)
-    .style("top", (11 + y(d.department)).toString() + "px")
-    .style("left", (120 + (x1(d.valueOffset + d.value))).toString() + "px");
+
+  dataByGroup[0].values.forEach(function(d){
     d3.select("#chart_container").append("div")
     .attr("class", "axis_label")
     .html("<div class='text'>" + d.department + "</div>")
-    .style("top", (11 + y(d.department)).toString() + "px")
+    .style("top", (41 + y(d.department)).toString() + "px")
     .style("left", "0px");
-  });
+  })
 
   var group = svg.selectAll(".group")
       .data(dataByGroup)
@@ -65,13 +138,18 @@ d3.csv("data.csv", function(error, data) {
       .attr("class", "group")
       .attr("transform", function(d) { return "translate(" + x0(x0.domain()[0]) + ", 0)"; });
 
-  // //Adds y-axis labels
-  // group.append("text")
-  //     .attr("class", "group-label")
-  //     .attr("x", -6)
-  //     .attr("y", function(d) { return y1(d.values[0].value / 2); })
-  //     .attr("dy", ".35em")
-  //     .text(function(d) { return d.key; });
+  //Add all item totals.
+  add_totals();
+
+  //Adds all category labels
+  dataByGroup.forEach(function(d){
+    d3.select("#chart_container").append("div")
+    .attr("class", "group_label")
+    .style("left", ( 110 + x1(d.values[d.values.length - 1].valueOffset[0])).toString() + "px" )
+    .style("color", color(d.key))
+    .text( d.key);
+
+  })
 
   //Adds all data bars
   group.selectAll("rect")
@@ -82,7 +160,7 @@ d3.csv("data.csv", function(error, data) {
       .style("opacity", 0.7)
       .style("stroke", "#fff")
       .attr("class", "data_block")
-      .attr("x", function(d) { return x1(d.valueOffset); })
+      .attr("x", function(d) { return x1(d.valueOffset[0]); })
       .attr("height", y.rangeBand())
       .attr("width", function(d) { return x1(d.value); })
       .on("mouseover", function(d) {
@@ -98,36 +176,83 @@ d3.csv("data.csv", function(error, data) {
         toggle(d.category);
       });
 
-  //Adds y-axis labels
-  // group.filter(function(d, i) { return !i; }).append("g")
-  //     .attr("class", "y axis")
-  //     .call(yAxis);
-
-  function toggle() {
-    if (status == "stacked"){
-      transitionMultiples();
-      status = "multiples";
-    } else {
-      transitionStacked();
+  function toggle(category) {
+    if (status == category){
       status = "stacked";
+      transitionStacked();
+    } else {
+      status = category;
+      transitionMultiples();
     }
   }
 
   function transitionMultiples() {
     var t = d3.transition().duration(750),
-        g = t.selectAll(".group").attr("transform", function(d) { return "translate(" + x0(d.key) + ", 0)"; }),
-        v = d3.selectAll(".index_label").transition().duration(750).style("left", "680px");
-        g.selectAll("rect").attr("x", function(d) { return 0; });
-    // $(".index_label").animate({"left": "800px"}, 750);
-    // g.select(".group-label").attr("x", function(d) { return x1(d.values[0].value / 2); })
+        g = t.selectAll(".group").attr("transform", function(d) {
+            if ((categories[d.key] < categories[status])){
+              return "translate(" + x0(x0.domain()[0]) + ", 0)";
+            } else if ((categories[d.key] == categories[status])){
+              return "translate(" + x0(status) + ", 0)";
+            } else {
+              return "translate(" + x0(inverted_categories[categories[status] + 1]) + ", 0)";
+            }
+          }).each("end", function(){
+            add_totals();
+          });
+        v = d3.selectAll(".index_label").transition().duration(150).style("opacity", 0);
+
+        g.selectAll("rect").attr("x", function(d) {
+          if ((categories[d.category] < categories[status])){
+            return x1(d.valueOffset[0]);
+          } else if (categories[d.category] == categories[status]) {
+            return 0;
+          } else {
+            return x1(d.valueOffset[categories[status] + 1]);
+          }
+        });
+
+    // d3.selectAll(".group_label").transition.style("left", function(d) { return x1(d.values[0].value); })
   }
 
   function transitionStacked() {
     var t = d3.transition().duration(750),
         g = t.selectAll(".group").attr("transform", "translate(" + x0(x0.domain()[0]) + ", 0)");
 
-        g.selectAll("rect").attr("x", function(d) { return x1(d.valueOffset); });
+        g.selectAll("rect").attr("x", function(d) { return x1(d.valueOffset[0]); });
     // g.select(".group-label").attr("x", function(d) { return x1(d.values[0].value / 2 + d.values[0].valueOffset); })
+  }
+
+  function invert(obj) {
+    var new_obj = {};
+
+    for (var prop in obj) {
+      if(obj.hasOwnProperty(prop)) {
+        new_obj[obj[prop]] = prop;
+      }
+    }
+    return new_obj;
+  };
+
+  function add_totals(){
+    if (status == "stacked"){
+      d3.selectAll(".group").data()[4].values.forEach(function(d){
+        d3.select("#chart_container").append("div")
+        .attr("class", "index_label")
+        .attr("id", "index_label_" + d.department.substring(0,3))
+        .text(d.value + d.valueOffset[0])
+        .style("top", (41 + y(d.department)).toString() + "px")
+        .style("color", "#e6550d")
+        .style("left", (120 + (x1(d.valueOffset[0] + d.value))).toString() + "px");
+      });
+    } else {
+      d3.selectAll(".group").data()[categories[status]].values.forEach(function(d){
+        d3.select("#index_label_" + d.department.substring(0,3))
+        .text(d.value)
+        .style("left", (82 + x0(status) + (x1(d.value))).toString() + "px")
+        .style("color", color(d.category))
+        .transition(150).style("opacity", 1);
+      });
+    }
   }
 
 });
