@@ -96,6 +96,9 @@ var categories = new Object();
 var inverted_categories = new Object();
 category_counter = 0;
 
+var departments = new Object();
+department_counter = 0;
+
 d3.csv("data.csv", function(error, data) {
 
   data.forEach(function(d) {
@@ -141,15 +144,19 @@ d3.csv("data.csv", function(error, data) {
 
 
   //Adds all category labels
-  dataByGroup.forEach(function(d){
-    d3.select("#chart_container").append("div")
-    .attr("class", "group_label")
-    .attr("id", "group_label_" + categories[d.key])
-    .style("left", ( 110 + x1(d.values[d.values.length - 1].valueOffset[0])).toString() + "px" )
-    .style("color", color(d.key))
-    .text( d.key);
+  setTimeout(function() {
+    dataByGroup.forEach(function(d){
+      d3.select("#chart_container").append("div")
+      .attr("class", "group_label")
+      .attr("id", "group_label_" + categories[d.key])
+      .style("left", ( 110 + x1(d.values[d.values.length - 1].valueOffset[0])).toString() + "px" )
+      .style("color", color(d.key))
+      .style("opacity", 0)
+      .text( d.key)
+      .transition().duration(300).style("opacity", 1);
 
-  })
+    })
+  }, 2000);
 
   //Adds all data bars
   group.selectAll("rect")
@@ -175,24 +182,27 @@ d3.csv("data.csv", function(error, data) {
       .on("click", function(d) {
         toggle(d.category);
       });
-	
-	setTimeout(function() {
-	    group.transition().duration(750).selectAll("rect")
-			.attr("x", function(d) { return x1(d.valueOffset[0]); })
-			.attr("width", function(d) { return x1(d.value); });
-		setTimeout(function() {
-			  //Add all item totals.
-			  d3.selectAll(".group").data()[4].values.forEach(function(d){
-			    d3.select("#chart_container").append("div")
-			    .attr("class", "index_label")
-			    .attr("id", "index_label_" + d.department.substring(0,3))
-			    .text(d.value + d.valueOffset[0])
-			    .style("top", (41 + y(d.department)).toString() + "px")
-			    .style("color", "#e6550d")
-			    .style("left", (120 + (x1(d.valueOffset[0] + d.value))).toString() + "px");
-			  });
-			}, 1000);
-	  }, 1000);
+
+  setTimeout(function() {
+      group.transition().duration(750).selectAll("rect")
+      .attr("x", function(d) { return x1(d.valueOffset[0]); })
+      .attr("width", function(d) { return x1(d.value); });
+    setTimeout(function() {
+        //Add all item totals.
+        d3.selectAll(".group").data()[4].values.forEach(function(d){
+          d3.select("#chart_container").append("div")
+          .attr("class", "index_label")
+          .attr("id", "index_label_" + d.department.substring(0,3))
+          .text(d.value + d.valueOffset[0])
+          .style("top", (41 + y(d.department)).toString() + "px")
+          .style("color", "#e6550d")
+          .style("opacity", 0)
+          .style("left", (120 + (x1(d.valueOffset[0] + d.value))).toString() + "px")
+          .transition().duration(300).style("opacity", 1);
+
+        });
+      }, 1000);
+    }, 500);
 
   function toggle(category) {
     if (status == category){
