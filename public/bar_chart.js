@@ -138,16 +138,7 @@ d3.csv("data.csv", function(error, data) {
       .attr("class", "group")
       .attr("transform", function(d) { return "translate(" + x0(x0.domain()[0]) + ", 0)"; });
 
-  //Add all item totals.
-  d3.selectAll(".group").data()[4].values.forEach(function(d){
-    d3.select("#chart_container").append("div")
-    .attr("class", "index_label")
-    .attr("id", "index_label_" + d.department.substring(0,3))
-    .text(d.value + d.valueOffset[0])
-    .style("top", (41 + y(d.department)).toString() + "px")
-    .style("color", "#e6550d")
-    .style("left", (120 + (x1(d.valueOffset[0] + d.value))).toString() + "px");
-  });
+
 
   //Adds all category labels
   dataByGroup.forEach(function(d){
@@ -169,9 +160,9 @@ d3.csv("data.csv", function(error, data) {
       .style("opacity", 0.7)
       .style("stroke", "#fff")
       .attr("class", "data_block")
-      .attr("x", function(d) { return x1(d.valueOffset[0]); })
+      .attr("x", function(d) { return 0; })
       .attr("height", y.rangeBand())
-      .attr("width", function(d) { return x1(d.value); })
+      .attr("width", function(d) { return 0; })
       .on("mouseover", function(d) {
         d3.selectAll("rect").style("opacity", function(item) {
           if (d.category == item.category) {
@@ -184,6 +175,24 @@ d3.csv("data.csv", function(error, data) {
       .on("click", function(d) {
         toggle(d.category);
       });
+	
+	setTimeout(function() {
+	    group.transition().duration(750).selectAll("rect")
+			.attr("x", function(d) { return x1(d.valueOffset[0]); })
+			.attr("width", function(d) { return x1(d.value); });
+		setTimeout(function() {
+			  //Add all item totals.
+			  d3.selectAll(".group").data()[4].values.forEach(function(d){
+			    d3.select("#chart_container").append("div")
+			    .attr("class", "index_label")
+			    .attr("id", "index_label_" + d.department.substring(0,3))
+			    .text(d.value + d.valueOffset[0])
+			    .style("top", (41 + y(d.department)).toString() + "px")
+			    .style("color", "#e6550d")
+			    .style("left", (120 + (x1(d.valueOffset[0] + d.value))).toString() + "px");
+			  });
+			}, 1000);
+	  }, 1000);
 
   function toggle(category) {
     if (status == category){
